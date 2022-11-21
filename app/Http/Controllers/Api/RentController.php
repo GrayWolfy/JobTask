@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CarResource;
 use App\Http\Services\RentService;
 use App\Models\Car;
 use Illuminate\Http\JsonResponse;
@@ -15,8 +16,8 @@ class RentController extends Controller
     {
         $user = Auth::user();
         $service->rent($car, $user);
-        
-        return response()->json('Rented: ' . $car->name);
+
+        return response()->json(new CarResource($car));
     }
 
     public function finishRent(Car $car, RentService $service): JsonResponse
@@ -24,6 +25,6 @@ class RentController extends Controller
         $user = Auth::user();
         $service->finishRent($car, $user);
 
-        return response()->json('Your rent is over');
+        return response()->json(new CarResource($car));
     }
 }
