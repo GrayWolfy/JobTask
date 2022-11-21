@@ -5,7 +5,7 @@ info:
   description: JobTestApi
 
 paths:
-  /register:
+  /auth/register:
     post:
       summary: Register
       requestBody:
@@ -39,7 +39,7 @@ paths:
                   message:
                     type: string
                     example: "Unauthenticated"
-  /login:
+  /auth/login:
     post:
       summary: Login
       requestBody:
@@ -56,7 +56,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FullMessage'
-  /logout:
+  /auth/logout:
     post:
       summary: Logout
       requestBody:
