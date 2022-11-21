@@ -27,6 +27,8 @@ class Car extends Model
 {
     use HasFactory;
 
+    protected $table = 'cars';
+
     public static function notRented(CarRepository $repository): Collection|array
     {
         return $repository->notRented();
