@@ -25,11 +25,11 @@ class RentAble
         /** @var Car $car */
         $car = $request->car;
         if ($car->isRented()) {
-            return response()->json('Car ' . $car->name . ' is already rented');
+            return response()->json('Car ' . $car->name . ' is already rented', 401);
         }
 
         if ($user->rents) {
-            return response()->json('You want too much pal');
+            return response()->json('You want too much pal', 401);
         }
 
         return $next($request);
