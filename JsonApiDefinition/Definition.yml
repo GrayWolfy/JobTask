@@ -1,0 +1,277 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: 'Sample API'
+  description: JobTestApi
+
+paths:
+  /message/index:
+    get:
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+      summary: Get all contact messages
+      responses:
+        '200':
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FullMessage'
+  /message/create:
+    post:
+      summary: Create contact message
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        '200':
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullMessage'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The phone format is invalid."
+                  errors:
+                    type: array
+                    items:
+                      {}
+  /message/getRead:
+    get:
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+        - in: query
+          name: read
+          schema:
+            type: integer
+          required: true
+          description: Numbers of the searched phones
+      summary: Get all read messages
+      responses:
+        '200':
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FullMessage'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The phone format is invalid."
+                  errors:
+                    type: array
+                    items:
+                      {}
+  /message/getDeleted:
+    get:
+      summary: Get all deleted messages
+      responses:
+        '200':
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FullMessage'
+  /message/getByPhoneNumber:
+    get:
+      summary: Get by phone number
+      parameters:
+        - in: query
+          name: phoneDigits
+          schema:
+            type: string
+          required: true
+          description: Numbers of the searched phones
+      responses:
+        '200':
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FullMessage'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The phone format is invalid."
+                  errors:
+                    type: array
+                    items:
+                      {}
+  /message/update/{id}:
+    put:
+      summary: Update message
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Message number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                message:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullMessage'
+        '404':
+          description: Not Found
+  /message/setRead/{id}:
+    put:
+      summary: Set message as read
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Message number
+      responses:
+        '200':
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullMessage'
+        '404':
+          description: Not Found
+  /message/restore/{id}:
+    put:
+      summary: Set message as unread
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Message number
+      responses:
+        '200':
+          description: Restore message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullMessage'
+        '404':
+          description: Not Found
+  /message/delete/{id}:
+    delete:
+      summary: Delete message
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Message number
+      responses:
+        '200':
+          description: Deleted message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullMessage'
+        '404':
+          description: Not Found
+components:
+  schemas:
+    FullMessage:
+      description: Contact message
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        phone:
+          type: string
+          example: '89282631393'
+        name:
+          type: string
+          example: 'John Smith'
+        message:
+          type: string
+          example: 'Shame on you'
+        read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        deleted_at:
+          type: string
+          format: date-time
+    Message:
+      description: Contact message
+      type: object
+      required:
+        - name,
+        - phone,
+        - message,
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+        phone:
+          type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: A human readable error message
+          type: string

@@ -5,6 +5,7 @@ namespace App\Http\Services;
 
 
 use App\Http\Requests\CreateRequest;
+use App\Http\Requests\DeletedRequest;
 use App\Http\Requests\EntriesByReadRequest;
 use App\Http\Requests\PhoneNumberDigitsRequest;
 use App\Http\Requests\UpdateRequest;
@@ -28,12 +29,32 @@ class ReportMessageService
 
     public function getRead(EntriesByReadRequest $request): Collection|array
     {
-        return ContactMessage::query()->where('read', '=', $request->read)->get();
+        $messages = ContactMessage::query();
+
+        if (isset($request->filter)) {
+            $messages->where(
+                'phone',
+                'like',
+                '%' . $request->filter . '%',
+            );
+        }
+
+        return $messages->where('read', '=', $request->read)->get();
     }
 
-    public function getDeleted(): Collection|array
+    public function getDeleted(DeletedRequest $request): Collection|array
     {
-        return ContactMessage::query()->whereNotNull('deleted_at')->get();
+        $messages = ContactMessage::query();
+
+        if (isset($request->filter)) {
+            $messages->where(
+                'phone',
+                'like',
+                '%' . $request->filter . '%',
+            );
+        }
+
+        return $messages->whereNotNull('deleted_at')->get();
     }
 
     public function getByDigits(PhoneNumberDigitsRequest $request): Collection|array

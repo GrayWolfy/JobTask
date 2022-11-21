@@ -12,7 +12,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string $password
  * @package App\Http\Requests
  */
-class LoginRequest extends  FormRequest
+class LoginRequest extends FormRequest
 {
     public function rules()
     {

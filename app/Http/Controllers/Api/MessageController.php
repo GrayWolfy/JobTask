@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRequest;
+use App\Http\Requests\DeletedRequest;
 use App\Http\Requests\EntriesByReadRequest;
+use App\Http\Requests\IndexRequest;
 use App\Http\Requests\PhoneNumberDigitsRequest;
 use App\Http\Requests\UpdateRequest;
 use App\Http\Resources\MessageCollection;
@@ -12,13 +14,25 @@ use App\Http\Resources\MessageResource;
 use App\Http\Services\ReportMessageService;
 use App\Models\ContactMessage;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 
 class MessageController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(IndexRequest $request): JsonResponse
     {
-        return response()->json(new MessageCollection(ContactMessage::cursorPaginate(15)));
+        $messages = DB::table('contact_messages');
+
+        if (isset($request->filter)) {
+            $messages
+                ->where(
+                    'phone',
+                    'like',
+                    '%' . $request->filter . '%',
+                );
+        }
+
+        return response()->json(new MessageCollection($messages->get()->collect()));
     }
 
     public function create(CreateRequest $request, ReportMessageService $service): JsonResponse
@@ -31,9 +45,9 @@ class MessageController extends Controller
         return response()->json(new MessageCollection($service->getRead($request)));
     }
 
-    public function getDeleted(ReportMessageService $service): JsonResponse
+    public function getDeleted(DeletedRequest $request, ReportMessageService $service): JsonResponse
     {
-        return response()->json(new MessageCollection($service->getDeleted()));
+        return response()->json(new MessageCollection($service->getDeleted($request)));
     }
 
     public function getByPhoneNumberDigits(
