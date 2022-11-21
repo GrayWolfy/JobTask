@@ -5,6 +5,96 @@ info:
   description: JobTestApi
 
 paths:
+  /register:
+    post:
+      summary: Register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+      responses:
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The password format is invalid."
+                  errors:
+                    type: array
+                    items:
+                      {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthenticated"
+  /login:
+    post:
+      summary: Login
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullMessage'
+  /logout:
+    post:
+      summary: Logout
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+      responses:
+        '200':
+          description: All contact messages
+          content:
+            application/json:
+              schema:
+                type:
+                  object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  token:
+                    type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The password format is invalid."
+                  errors:
+                    type: array
+                    items:
+                      {}
   /message/index:
     get:
       parameters:
@@ -253,6 +343,31 @@ components:
         deleted_at:
           type: string
           format: date-time
+    Registration:
+      description: Registration
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    Login:
+      description: Login
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
     Message:
       description: Contact message
       type: object
