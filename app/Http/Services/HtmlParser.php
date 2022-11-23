@@ -4,6 +4,8 @@
 namespace App\Http\Services;
 
 
+use App\Models\Tag;
+
 class HtmlParser
 {
     protected string $html;
@@ -15,10 +17,11 @@ class HtmlParser
         $this->tags = [];
     }
 
-    public function tags()
+    public function tags(): array
     {
         $tags = [];
         $tagsBegin = explode('<', $this->html);
+
         foreach ($tagsBegin as $tag) {
             $tag = explode(' ', $tag);
             if (strpos($tag[0], '/') !== 0) {
@@ -27,14 +30,13 @@ class HtmlParser
         }
 
         foreach ($tags as $tag) {
-            if (!array_key_exists($tag, $this->tags)) {
-                $this->tags[$tag] = 0;
+            if (!array_key_exists($tag, $this->tags) && $tag) {
+                $this->tags[$tag] = new Tag($tag);
             }
 
             if (array_key_exists($tag, $this->tags)) {
-                $this->tags[$tag] += 1;
+                $this->tags[$tag]->add();
             }
-
         }
 
         return $this->tags;

@@ -366,6 +366,39 @@ paths:
                 $ref: '#/components/schemas/Car'
         '404':
           description: Not Found
+  /parse:
+    get:
+      summary: Parse html
+      parameters:
+        - in: query
+          name: uri
+          schema:
+            type: string
+          required: true
+          description: Uri of a page
+      responses:
+        '200':
+          description: Get read
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      {}
+
 components:
   schemas:
     Creds:
@@ -464,6 +497,14 @@ components:
           type: string
         phone:
           type: string
+    Tag:
+      description: Contact message
+      type: object
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
     Error:
       type: object
       required:
